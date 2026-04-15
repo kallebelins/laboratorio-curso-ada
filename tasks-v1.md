@@ -1,0 +1,256 @@
+# MovieFlix Analytics – Lista de Tarefas
+
+> Stack escolhida: **Python (Flask)** · **PostgreSQL** · **Docker / Docker Compose** · **Nginx** · **GitHub Actions** · **OMDB API**
+
+---
+
+## FASE 1 – Estrutura do Projeto
+
+```
+[ ] 001 - Definir e documentar a stack tecnológica
+    Registrar no README as tecnologias escolhidas, justificativas e versões.
+    Garante alinhamento do time antes de iniciar o código.
+    Referências: README.md (seção Objetivos)
+```
+
+```
+[ ] 002 - Criar estrutura de diretórios do repositório
+    Criar os diretórios: app/, nginx/, data/lake/, data/warehouse/, data/mart/,
+    data/scripts/, .github/workflows/.
+    Estrutura base para todas as fases seguintes.
+    Referências: 001
+```
+
+```
+[ ] 003 - Configurar arquivo .env.example e .gitignore
+    Criar .env.example com variáveis necessárias (DB_URL, OMDB_API_KEY,
+    DOCKERHUB_USERNAME etc.). Adicionar .env e __pycache__ ao .gitignore.
+    Evita expor secrets no repositório.
+    Referências: 001, 002
+    Links: https://docs.docker.com/compose/environment-variables/
+```
+
+---
+
+## FASE 2 – Aplicação Web
+
+```
+[ ] 004 - Criar aplicação Flask com rotas básicas
+    Implementar as rotas:
+      GET  /          → lista de filmes com notas
+      GET  /movies/new → formulário de cadastro
+      POST /movies    → cadastrar filme
+      POST /movies/<id>/rate → avaliar filme (nota 1–5)
+    Usar Flask + SQLAlchemy. Persistência em PostgreSQL.
+    Referências: 002, 003
+    Links: https://flask.palletsprojects.com/
+           https://flask-sqlalchemy.palletsprojects.com/
+```
+
+```
+[ ] 005 - Modelar banco de dados da aplicação (PostgreSQL)
+    Criar models: Movie (id, title, genre, year, created_at) e
+    Rating (id, movie_id, score, created_at).
+    Inicializar tabelas via flask db upgrade ou script init_db.py.
+    Referências: 004
+    Links: https://docs.sqlalchemy.org/en/20/
+```
+
+```
+[ ] 006 - Criar templates HTML simples (Jinja2)
+    Páginas: index.html (listagem) e new_movie.html (formulário).
+    Sem frameworks CSS pesados – Bootstrap CDN é suficiente.
+    Referências: 004, 005
+    Links: https://getbootstrap.com/docs/5.3/
+```
+
+```
+[ ] 007 - Criar Dockerfile da aplicação
+    Imagem base: python:3.12-slim.
+    Instalar dependências via requirements.txt.
+    Expor porta 5000. Usar CMD gunicorn para produção.
+    Referências: 004, 005, 006
+    Links: https://docs.docker.com/reference/dockerfile/
+           https://gunicorn.org/
+```
+
+```
+[ ] 008 - Configurar Nginx como proxy reverso
+    Criar nginx/nginx.conf com upstream apontando para o serviço app:5000.
+    Servir na porta 80.
+    Referências: 007
+    Links: https://nginx.org/en/docs/beginners_guide.html
+```
+
+```
+[ ] 009 - Criar docker-compose.yml (app + db + nginx)
+    Serviços: app (Flask), db (postgres:16-alpine), nginx.
+    Usar volumes para persistência do Postgres.
+    Usar depends_on com healthcheck para garantir ordem de inicialização.
+    Referências: 007, 008
+    Links: https://docs.docker.com/compose/
+```
+
+```
+[ ] 010 - Testar aplicação localmente com Docker Compose
+    Rodar: docker compose up --build
+    Verificar que http://localhost responde corretamente via Nginx.
+    Cadastrar pelo menos um filme e uma avaliação para validar o fluxo.
+    Referências: 009
+```
+
+---
+
+## FASE 3 – Pipeline CI/CD (GitHub Actions)
+
+```
+[ ] 011 - Configurar secrets no repositório GitHub
+    Adicionar em Settings → Secrets and variables → Actions:
+      DOCKERHUB_USERNAME, DOCKERHUB_TOKEN
+    Referências: 003
+    Links: https://docs.github.com/en/actions/security-guides/encrypted-secrets
+           https://hub.docker.com/settings/security
+```
+
+```
+[ ] 012 - Criar workflow: build + test + push (.github/workflows/ci.yml)
+    Etapas do job:
+      1. checkout
+      2. docker build -t <image>:latest
+      3. docker compose up -d ; sleep 5
+         curl --fail http://localhost || exit 1  (teste de smoke)
+      4. docker compose down
+      5. docker login + docker push (apenas em push para main)
+    Trigger: push e pull_request na branch main.
+    Referências: 009, 011
+    Links: https://docs.github.com/en/actions/use-cases-and-examples/publishing-packages/publishing-docker-images
+           https://github.com/docker/login-action
+           https://github.com/docker/build-push-action
+```
+
+```
+[ ] 013 - Validar pipeline no GitHub Actions
+    Fazer push e verificar que os 3 passos passam (build, test, push).
+    Confirmar imagem disponível no Docker Hub.
+    Referências: 012
+```
+
+---
+
+## FASE 4 – Dados (Data Lake → DW → Data Mart)
+
+```
+[ ] 014 - Buscar dados via OMDB API e gerar CSVs (Data Lake)
+    Criar script data/scripts/fetch_lake.py que:
+      - Consulta OMDB API para N filmes (ex.: 50 títulos variados)
+      - Gera data/lake/movies.csv (imdbID, title, genre, year, country, imdbRating)
+      - Gera data/lake/users.csv (id, name, age_group, country) – dados sintéticos
+      - Gera data/lake/ratings.csv (user_id, movie_id, score, rated_at) – sintético
+    Referências: 003 (.env com OMDB_API_KEY)
+    Links: https://www.omdbapi.com/
+           https://docs.python.org/3/library/csv.html
+```
+
+```
+[ ] 015 - Criar schema do Data Warehouse no PostgreSQL
+    Criar script data/scripts/create_dw.sql com tabelas dimensão e fato:
+      dim_movie (movie_id, title, genre, year, country, imdb_rating)
+      dim_user  (user_id, name, age_group, country)
+      fact_rating (rating_id, movie_id, user_id, score, rated_at)
+    Separar em schema "dw" para não conflitar com a app.
+    Referências: 014
+    Links: https://www.postgresql.org/docs/current/ddl-schemas.html
+```
+
+```
+[ ] 016 - Criar script ETL: CSV do Data Lake → Data Warehouse
+    Criar data/scripts/etl_load.py que:
+      - Lê os 3 CSVs do Data Lake (pandas ou csv nativo)
+      - Trata/normaliza dados (strip, tipos, datas)
+      - Insere nas tabelas do DW via psycopg2 ou pandas.to_sql
+    Referências: 014, 015
+    Links: https://www.psycopg.org/psycopg3/docs/
+           https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html
+```
+
+```
+[ ] 017 - Criar views do Data Mart
+    Criar data/scripts/create_mart.sql com views/materialized views:
+      mart_top10_by_genre   → Top 10 filmes por gênero (média de score)
+      mart_avg_by_age_group → Nota média por faixa etária
+      mart_ratings_by_country → Número de avaliações por país
+    Referências: 015, 016
+    Links: https://www.postgresql.org/docs/current/sql-createview.html
+           https://www.postgresql.org/docs/current/sql-creatematerializedview.html
+```
+
+```
+[ ] 018 - Escrever queries analíticas
+    Criar data/scripts/analytics.sql com as consultas pedidas:
+      Q1: Quais os 5 filmes mais populares? (maior nº de avaliações)
+      Q2: Qual gênero tem melhor avaliação média?
+      Q3: Qual país assiste mais filmes?
+    Documentar resultados esperados como comentários no próprio arquivo.
+    Referências: 017
+```
+
+```
+[ ] 019 - Adicionar serviço de dados ao docker-compose.yml
+    Incluir target/job no compose (ou Makefile) para:
+      docker compose run --rm app python data/scripts/fetch_lake.py
+      docker compose run --rm app python data/scripts/etl_load.py
+      psql ... -f data/scripts/create_dw.sql
+      psql ... -f data/scripts/create_mart.sql
+    Simplifica a execução do ETL em ambiente local e CI.
+    Referências: 009, 016, 017
+```
+
+---
+
+## FASE 5 – Documentação e Entrega
+
+```
+[ ] 020 - Atualizar README com arquitetura completa
+    Incluir:
+      - Diagrama de arquitetura (texto/ASCII ou Mermaid)
+      - Como rodar localmente (pré-requisitos, docker compose up)
+      - Como rodar o ETL
+      - Link da imagem no Docker Hub
+      - Exemplos dos resultados das queries analíticas
+    Referências: todas as fases anteriores
+    Links: https://mermaid.js.org/syntax/flowchart.html
+```
+
+```
+[ ] 021 - Revisão final e testes end-to-end
+    Checklist:
+      [ ] Pipeline verde no GitHub Actions
+      [ ] Imagem publicada no Docker Hub
+      [ ] App acessível via Nginx (localhost:80)
+      [ ] ETL roda sem erros
+      [ ] Queries do Data Mart retornam resultados
+    Referências: 010, 013, 019
+```
+
+```
+[ ] 022 - Enviar projeto por e-mail
+    Título: <Seu nome completo> + Projeto final
+    Destinatário: raoni@srelabs.cloud
+    Incluir: link do repositório GitHub e link da imagem no Docker Hub.
+    Prazo: 22 de abril de 2026 às 23:59.
+    Referências: README.md (seção Entregáveis)
+```
+
+---
+
+## Resumo das Fases
+
+| Fase | Foco | Tarefas |
+|------|------|---------|
+| 1 – Estrutura | Organização e configuração inicial | 001 – 003 |
+| 2 – App Web | Flask + PostgreSQL + Nginx + Docker | 004 – 010 |
+| 3 – CI/CD | GitHub Actions + Docker Hub | 011 – 013 |
+| 4 – Dados | Data Lake · DW · Data Mart · Queries | 014 – 019 |
+| 5 – Entrega | Documentação e submissão | 020 – 022 |
+
+**Total: 22 tarefas**
