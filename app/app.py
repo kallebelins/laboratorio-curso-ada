@@ -138,47 +138,68 @@ def movie_detail(imdb_id: str):
 def analytics():
     with _db() as conn:
         with conn.cursor() as cur:
-            # Top gêneros por nota média (usuários)
+            # Q1: Top 5 filmes mais populares (maior nº de avaliações)
             cur.execute("""
-                SELECT TRIM(UNNEST(STRING_TO_ARRAY(m.genre, ','))) AS genre,
-                       ROUND(AVG(r.score)::numeric, 2)             AS avg_score,
-                       COUNT(r.id)                                  AS num_ratings
-                FROM   movies  m
-                JOIN   ratings r ON m.imdb_id = r.movie_id
+                SELECT m.title,
+                       m.genre,
+                       COUNT(f.rating_id)              AS total_ratings,
+                       ROUND(AVG(f.score)::numeric, 2) AS avg_score
+                FROM   dw.fact_rating f
+                JOIN   dw.dim_movie   m ON m.movie_id = f.movie_id
+                GROUP  BY m.movie_id, m.title, m.genre
+                ORDER  BY total_ratings DESC
+                LIMIT  5
+            """)
+            top_popular = cur.fetchall()
+
+            # Q2: Top gêneros por nota média – Data Mart view
+            cur.execute("""
+                SELECT split_part(m.genre, ',', 1)         AS genre,
+                       ROUND(AVG(f.score)::numeric, 2)     AS avg_score,
+                       COUNT(f.rating_id)                  AS num_ratings
+                FROM   dw.fact_rating f
+                JOIN   dw.dim_movie   m ON m.movie_id = f.movie_id
+                WHERE  m.genre IS NOT NULL
                 GROUP  BY genre
                 ORDER  BY avg_score DESC
                 LIMIT  10
             """)
             top_genres = cur.fetchall()
 
-            # Nota média por faixa etária
+            # Top 10 filmes por gênero – Data Mart view (mart_top10_by_genre)
             cur.execute("""
-                SELECT u.age_group,
-                       ROUND(AVG(r.score)::numeric, 2) AS avg_score,
-                       COUNT(r.id)                      AS num_ratings
-                FROM   ratings r
-                JOIN   users   u ON r.user_id = u.id
-                GROUP  BY u.age_group
-                ORDER  BY avg_score DESC
+                SELECT primary_genre,
+                       title,
+                       avg_score,
+                       total_ratings
+                FROM   dw.mart_top10_by_genre
+            """)
+            top10_by_genre = cur.fetchall()
+
+            # Q3: Nota média por faixa etária – Data Mart view
+            cur.execute("""
+                SELECT age_group,
+                       avg_score,
+                       total_ratings AS num_ratings
+                FROM   dw.mart_avg_by_age_group
             """)
             by_age_group = cur.fetchall()
 
-            # Avaliações por país do usuário
+            # Q3: Avaliações por país – Data Mart view (mart_ratings_by_country)
             cur.execute("""
-                SELECT u.country,
-                       COUNT(r.id)                      AS num_ratings,
-                       ROUND(AVG(r.score)::numeric, 2)  AS avg_score
-                FROM   ratings r
-                JOIN   users   u ON r.user_id = u.id
-                GROUP  BY u.country
-                ORDER  BY num_ratings DESC
+                SELECT country,
+                       total_ratings AS num_ratings,
+                       avg_score
+                FROM   dw.mart_ratings_by_country
                 LIMIT  10
             """)
             by_country = cur.fetchall()
 
     return render_template(
         "analytics.html",
+        top_popular=top_popular,
         top_genres=top_genres,
+        top10_by_genre=top10_by_genre,
         by_age_group=by_age_group,
         by_country=by_country,
     )

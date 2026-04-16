@@ -6,7 +6,40 @@
 
 <div class="row g-4">
 
-  <!-- Top gêneros por nota média ---------------------------------------------->
+  <!-- Q1: Top 5 filmes mais populares ---------------------------------------->
+  <div class="col-12">
+    <h5 class="mb-3">🔥 Top 5 Filmes Mais Populares</h5>
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Título</th>
+              <th>Gênero</th>
+              <th class="text-center">Avaliações</th>
+              <th class="text-center">Nota Média</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in top_popular %}
+            <tr>
+              <td class="text-muted fw-bold">{{ loop.index }}</td>
+              <td>{{ m.title }}</td>
+              <td><span class="badge bg-primary">{{ (m.genre or "–").split(",")[0] }}</span></td>
+              <td class="text-center">{{ m.total_ratings }}</td>
+              <td class="text-center fw-bold">{{ m.avg_score }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-center text-muted py-3">Sem dados.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2: Top gêneros por nota média ------------------------------------------>
   <div class="col-lg-6">
     <h5 class="mb-3">🎭 Melhores Gêneros por Nota Média</h5>
     <div class="card">
@@ -66,7 +99,7 @@
     </div>
   </div>
 
-  <!-- Avaliações por país ----------------------------------------------------->
+  <!-- Q3: Avaliações por país ------------------------------------------------->
   <div class="col-12">
     <h5 class="mb-3">🌍 Avaliações por País (Top 10)</h5>
     <div class="card">
@@ -97,5 +130,45 @@
     </div>
   </div>
 
+  <!-- Data Mart: Top 10 filmes por gênero ------------------------------------->
+  <div class="col-12">
+    <h5 class="mb-3">🏆 Top 10 Filmes por Gênero <small class="text-muted fs-6">(Data Mart)</small></h5>
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Gênero</th>
+              <th>Título</th>
+              <th class="text-center">Nota Média</th>
+              <th class="text-center">Avaliações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% set current_genre = namespace(value="") %}
+            {% for row in top10_by_genre %}
+            {% if row.primary_genre != current_genre.value %}
+            {% set current_genre.value = row.primary_genre %}
+            <tr class="table-light">
+              <td colspan="4" class="fw-semibold text-secondary small text-uppercase">{{ row.primary_genre }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+              <td></td>
+              <td>{{ row.title }}</td>
+              <td class="text-center fw-bold">{{ row.avg_score }}</td>
+              <td class="text-center text-muted">{{ row.total_ratings }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-center text-muted py-3">Sem dados.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div>
+{% endblock %}
+
 {% endblock %}

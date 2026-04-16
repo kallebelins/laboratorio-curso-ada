@@ -141,7 +141,7 @@
 ## FASE 4 – Pipeline CI/CD (GitHub Actions)
 
 ```
-[ ] 013 - Configurar secrets no repositório GitHub
+[x] 013 - Configurar secrets no repositório GitHub
     Adicionar em Settings → Secrets and variables → Actions:
       DOCKERHUB_USERNAME, DOCKERHUB_TOKEN
     Referências: 003
@@ -150,7 +150,7 @@
 ```
 
 ```
-[ ] 014 - Criar workflow: build + test + push (.github/workflows/ci.yml)
+[x] 014 - Criar workflow: build + test + push (.github/workflows/ci.yml)
     Etapas do job:
       1. checkout
       2. docker build -t <image>:latest
@@ -166,7 +166,7 @@
 ```
 
 ```
-[ ] 015 - Validar pipeline no GitHub Actions
+[x] 015 - Validar pipeline no GitHub Actions
     Fazer push e verificar que os 3 passos passam (build, test, push).
     Confirmar imagem disponível no Docker Hub.
     Referências: 014
@@ -177,7 +177,7 @@
 ## FASE 5 – Data Warehouse, Data Mart e Queries
 
 ```
-[ ] 016 - Criar schema do Data Warehouse no PostgreSQL
+[x] 016 - Criar schema do Data Warehouse no PostgreSQL
     Criar script data/scripts/create_dw.sql com tabelas dimensão e fato:
       dim_movie (movie_id, title, genre, year, country, imdb_rating)
       dim_user  (user_id, name, age_group, country)
@@ -188,7 +188,7 @@
 ```
 
 ```
-[ ] 017 - Criar script ETL: CSV do Data Lake → Data Warehouse
+[x] 017 - Criar script ETL: CSV do Data Lake → Data Warehouse
     Criar data/scripts/etl_load.py que:
       - Lê os 3 CSVs do Data Lake (pandas ou csv nativo)
       - Trata/normaliza dados (strip, tipos, datas)
@@ -199,7 +199,7 @@
 ```
 
 ```
-[ ] 018 - Criar views do Data Mart
+[x] 018 - Criar views do Data Mart
     Criar data/scripts/create_mart.sql com views/materialized views:
       mart_top10_by_genre     → Top 10 filmes por gênero (média de score)
       mart_avg_by_age_group   → Nota média por faixa etária
@@ -210,7 +210,7 @@
 ```
 
 ```
-[ ] 019 - Escrever queries analíticas
+[x] 019 - Escrever queries analíticas
     Criar data/scripts/analytics.sql com as consultas pedidas:
       Q1: Quais os 5 filmes mais populares? (maior nº de avaliações)
       Q2: Qual gênero tem melhor avaliação média?
@@ -220,7 +220,7 @@
 ```
 
 ```
-[ ] 020 - Adicionar comandos ETL ao docker-compose.yml / Makefile
+[x] 020 - Adicionar comandos ETL ao docker-compose.yml / Makefile
     Incluir targets para executar o pipeline de dados:
       python data/scripts/fetch_lake.py  (já disponível da fase 2)
       psql ... -f data/scripts/create_dw.sql

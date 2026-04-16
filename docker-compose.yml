@@ -2,7 +2,7 @@ services:
 
   # ── Banco de Dados ──────────────────────────────────────────────────────────
   db:
-    container_name: movieflix-db
+    container_name: movieflix-dw
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
@@ -34,6 +34,20 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  # ── Pipeline: Data Lake → Data Warehouse → Data Mart ────────────────────────
+  etl:
+    container_name: movieflix-pipeline
+    build: .
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:P4ssw0rd@db:5432/movieflix}
+    volumes:
+      - ./data:/app/data
+    command: python data/scripts/etl_load.py
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
 
   # ── Nginx (proxy reverso) ────────────────────────────────────────────────────
   nginx:
