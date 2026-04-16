@@ -52,7 +52,7 @@
 ## FASE 3 – Aplicação Web
 
 ```
-[ ] 005 - Modelar banco de dados da aplicação (PostgreSQL)
+[x] 005 - Modelar banco de dados da aplicação (PostgreSQL)
     Criar models/tabelas:
       movies  (id, imdb_id, title, genre, year, country, imdb_rating)
       users   (id, name, age_group, country)
@@ -63,7 +63,7 @@
 ```
 
 ```
-[ ] 006 - Criar script de carga (ETL simples: CSVs → PostgreSQL)
+[x] 006 - Criar script de carga (ETL simples: CSVs → PostgreSQL)
     Criar app/init_db.py que:
       - Cria o schema e as tabelas usando app/schema.sql caso não existam.
       - Lê data/lake/movies.csv, users.csv e ratings.csv com pandas.
@@ -76,7 +76,7 @@
 ```
 
 ```
-[ ] 007 - Criar aplicação Flask com rotas analíticas (somente leitura)
+[x] 007 - Criar aplicação Flask com rotas analíticas (somente leitura)
     Implementar as rotas:
       GET /               → dashboard: top filmes e resumo de avaliações
       GET /movies         → listagem de filmes com nota média
@@ -90,7 +90,7 @@
 ```
 
 ```
-[ ] 008 - Criar templates HTML simples (Jinja2)
+[x] 008 - Criar templates HTML simples (Jinja2)
     Páginas: index.html (dashboard), movies.html (listagem),
     movie_detail.html (detalhe) e analytics.html (visões analíticas).
     Sem frameworks CSS pesados – Bootstrap CDN é suficiente.
@@ -99,7 +99,7 @@
 ```
 
 ```
-[ ] 009 - Criar Dockerfile da aplicação
+[x] 009 - Criar Dockerfile da aplicação
     Imagem base: python:3.12-slim.
     Instalar dependências via requirements.txt.
     Copiar data/lake/ para dentro da imagem (ou montar como volume no compose).
@@ -110,7 +110,7 @@
 ```
 
 ```
-[ ] 010 - Configurar Nginx como proxy reverso
+[x] 010 - Configurar Nginx como proxy reverso
     Criar nginx/nginx.conf com upstream apontando para o serviço app:5000.
     Servir na porta 80.
     Referências: 009
@@ -118,7 +118,7 @@
 ```
 
 ```
-[ ] 011 - Criar docker-compose.yml (app + db + nginx)
+[x] 011 - Criar docker-compose.yml (app + db + nginx)
     Serviços: app (Flask), db (postgres:16-alpine), nginx.
     Usar volumes para persistência do Postgres e montagem de data/lake/.
     Incluir serviço/comando de inicialização que execute init_db.py antes
@@ -128,7 +128,7 @@
 ```
 
 ```
-[ ] 012 - Testar aplicação localmente com Docker Compose
+[x] 012 - Testar aplicação localmente com Docker Compose
     Rodar: docker compose up --build
     Verificar que http://localhost responde corretamente via Nginx.
     Confirmar que a carga dos CSVs foi executada e as páginas exibem dados reais
