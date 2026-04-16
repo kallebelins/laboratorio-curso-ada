@@ -203,6 +203,17 @@ Abra `http://localhost` no navegador. Rotas disponíveis:
 | `GET /movies/<id>` | Detalhe do filme com avaliações |
 | `GET /analytics` | Visões analíticas (gênero, país, faixa etária) |
 
+#### Screenshots
+
+**Dashboard**
+![Dashboard](images/home.png)
+
+**Catálogo de Filmes**
+![Catálogo de Filmes](images/filmes.png)
+
+**Analytics**
+![Analytics](images/analytics.png)
+
 ### 5. Parar os serviços
 
 ```bash
