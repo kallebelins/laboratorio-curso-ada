@@ -235,7 +235,7 @@
 ## FASE 6 – Documentação e Entrega
 
 ```
-[ ] 021 - Atualizar README com arquitetura completa
+[x] 021 - Atualizar README com arquitetura completa
     Incluir:
       - Diagrama de arquitetura (texto/ASCII ou Mermaid)
       - Como rodar localmente (pré-requisitos, docker compose up)
@@ -247,13 +247,13 @@
 ```
 
 ```
-[ ] 022 - Revisão final e testes end-to-end
+[x] 022 - Revisão final e testes end-to-end
     Checklist:
-      [ ] Pipeline verde no GitHub Actions
-      [ ] Imagem publicada no Docker Hub
-      [ ] App acessível via Nginx (localhost:80)
-      [ ] ETL roda sem erros
-      [ ] Queries do Data Mart retornam resultados
+      [x] Pipeline verde no GitHub Actions
+      [x] Imagem publicada no Docker Hub
+      [x] App acessível via Nginx (localhost:80)
+      [x] ETL roda sem erros
+      [x] Queries do Data Mart retornam resultados
     Referências: 012, 015, 020
 ```
 
