@@ -46,14 +46,14 @@ logs:
 
 # ── Data Lake ─────────────────────────────────────────────────
 fetch-lake:
-	docker compose run --rm app python data/scripts/fetch_lake.py
+	docker compose run --rm etl python data/scripts/fetch_lake.py
 
 # ── Data Warehouse ────────────────────────────────────────────
 etl-load:
 	docker compose run --rm etl
 
 create-mart:
-	$(PSQL) -f /dev/stdin < data/scripts/create_mart.sql
+	$(PSQL) -f /dev/stdin < data/mart/create_mart.sql
 
 analytics:
 	@echo "=== Q1: Top 5 filmes mais populares ==="

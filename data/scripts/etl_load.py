@@ -27,8 +27,8 @@ DATABASE_URL = os.environ.get(
 )
 DATA_LAKE_DIR = Path(os.environ.get("DATA_LAKE_DIR", "data/lake"))
 
-DW_SQL   = Path(__file__).parent / "create_dw.sql"
-MART_SQL = Path(__file__).parent / "create_mart.sql"
+DW_SQL   = Path(__file__).parent.parent / "warehouse" / "create_dw.sql"
+MART_SQL = Path(__file__).parent.parent / "mart" / "create_mart.sql"
 
 
 # ── Conexão ───────────────────────────────────────────────────────────────────
