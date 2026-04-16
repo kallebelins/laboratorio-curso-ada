@@ -18,11 +18,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── 2. Build ─────────────────────────────────────────────────────────────
+      # ── 2. Gerar Data Lake (CSVs necessários para a app) ─────────────────────
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install fetch_lake dependencies
+        run: pip install pandas requests
+
+      - name: Generate Data Lake CSVs
+        env:
+          OMDB_API_KEY: ${{ secrets.OMDB_API_KEY }}
+        run: python data/scripts/fetch_lake.py
+
+      # ── 3. Build ─────────────────────────────────────────────────────────────
       - name: Build Docker image
         run: docker build -t $IMAGE_NAME:latest .
 
-      # ── 3. Smoke test ────────────────────────────────────────────────────────
+      # ── 4. Smoke test ────────────────────────────────────────────────────────
       - name: Start services
         run: docker compose up -d
 
@@ -41,12 +55,12 @@ jobs:
           docker compose logs
           exit 1
 
-      # ── 4. Teardown ──────────────────────────────────────────────────────────
+      # ── 5. Teardown ──────────────────────────────────────────────────────────
       - name: Tear down services
         if: always()
         run: docker compose down --volumes
 
-      # ── 5. Login & Push (somente em push para main) ──────────────────────────
+      # ── 6. Login & Push (somente em push para main) ──────────────────────────
       - name: Log in to Docker Hub
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: docker/login-action@v3
