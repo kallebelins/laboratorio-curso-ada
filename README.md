@@ -79,6 +79,24 @@ Escrever queries SQL que respondam perguntas como:
 ○	Consultas SQL ou dashboards mostrando resultados do Data Mart.
 
 
+## Stack Tecnológica
+
+| Tecnologia | Versão | Justificativa |
+|---|---|---|
+| Python | 3.12 | Linguagem versátil com ecossistema rico para web e dados |
+| Flask | 3.x | Microframework leve e fácil de containerizar |
+| SQLAlchemy | 2.x | ORM robusto, integração nativa com Flask e PostgreSQL |
+| PostgreSQL | 16 | Banco relacional maduro, suporte a schemas (app/dw) |
+| Docker | 27.x | Padronização de ambientes, isolamento de serviços |
+| Docker Compose | 2.x | Orquestração local de múltiplos containers |
+| Nginx | 1.27 | Proxy reverso de alta performance, serve na porta 80 |
+| GitHub Actions | — | CI/CD nativo do GitHub, gratuito para repositórios públicos |
+| OMDB API | — | Fonte de dados de filmes para popular o Data Lake |
+| Gunicorn | 22.x | WSGI server de produção para a aplicação Flask |
+| pandas | 2.x | Manipulação e tratamento dos CSVs no pipeline ETL |
+| psycopg2-binary | 2.9.x | Driver Python para conexão com PostgreSQL |
+
+
 ## Prazo
 
 Os projetos serão aceitos até o dia 22 de abril de 2026 às 23:59.

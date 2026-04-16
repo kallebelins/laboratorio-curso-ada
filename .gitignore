@@ -1,0 +1,42 @@
+# Secrets e variáveis de ambiente
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+ENV/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDEs
+.vscode/
+.idea/
+*.code-workspace
+
+# Dados gerados (manter estrutura, ignorar arquivos de dados)
+data/lake/*.csv
+data/warehouse/*.sql.bak
+data/mart/*.sql.bak
+
+# Docker
+*.log
+
+# macOS / Windows
+.DS_Store
+Thumbs.db
