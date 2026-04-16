@@ -1,0 +1,59 @@
+name: CI – Build, Test & Push
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/movieflix-analytics
+
+jobs:
+  build-test-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Build ─────────────────────────────────────────────────────────────
+      - name: Build Docker image
+        run: docker build -t $IMAGE_NAME:latest .
+
+      # ── 3. Smoke test ────────────────────────────────────────────────────────
+      - name: Start services
+        run: docker compose up -d
+
+      - name: Wait for app to be healthy
+        run: |
+          echo "Waiting for the app to be ready..."
+          for i in $(seq 1 30); do
+            if curl --silent --fail http://localhost; then
+              echo "App is up!"
+              exit 0
+            fi
+            echo "Attempt $i/30 – not ready yet, waiting 5s..."
+            sleep 5
+          done
+          echo "App did not become healthy in time."
+          docker compose logs
+          exit 1
+
+      # ── 4. Teardown ──────────────────────────────────────────────────────────
+      - name: Tear down services
+        if: always()
+        run: docker compose down --volumes
+
+      # ── 5. Login & Push (somente em push para main) ──────────────────────────
+      - name: Log in to Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push image to Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: docker push $IMAGE_NAME:latest
