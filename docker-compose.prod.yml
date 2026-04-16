@@ -1,0 +1,19 @@
+services:
+
+  # ── Aplicação Flask ─────────────────────────────────────────────────────────
+  app:
+    container_name: movieflix-app
+    image: kallebelins/movieflix-analytics:latest
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:P4ssw0rd@db:5432/movieflix}
+      FLASK_ENV:    ${FLASK_ENV:-production}
+      SECRET_KEY:   ${SECRET_KEY:-P4ssw0rd}
+    expose:
+      - "5000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

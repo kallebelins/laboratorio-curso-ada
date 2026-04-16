@@ -22,6 +22,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar código da aplicação
 COPY app/ ./app/
 
+# Copiar Data Lake (gerado pelo fetch_lake.py antes do docker build no CI)
+COPY data/lake/ ./data/lake/
+
 # Copiar script de inicialização
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh

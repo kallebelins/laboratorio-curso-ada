@@ -2,12 +2,13 @@ services:
 
   # ── Banco de Dados ──────────────────────────────────────────────────────────
   db:
+    container_name: movieflix-db
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
       POSTGRES_DB:       ${DB_NAME:-movieflix}
       POSTGRES_USER:     ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-P4ssw0rd}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -18,12 +19,13 @@ services:
 
   # ── Aplicação Flask ─────────────────────────────────────────────────────────
   app:
+    container_name: movieflix-app
     build: .
     restart: unless-stopped
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:changeme@db:5432/movieflix}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:P4ssw0rd@db:5432/movieflix}
       FLASK_ENV:    ${FLASK_ENV:-production}
-      SECRET_KEY:   ${SECRET_KEY:-change-me-to-a-random-secret}
+      SECRET_KEY:   ${SECRET_KEY:-P4ssw0rd}
     volumes:
       # Data Lake montado como somente-leitura dentro do container
       - ./data/lake:/app/data/lake:ro
@@ -35,6 +37,7 @@ services:
 
   # ── Nginx (proxy reverso) ────────────────────────────────────────────────────
   nginx:
+    container_name: movieflix-nginx
     image: nginx:alpine
     restart: unless-stopped
     ports:
