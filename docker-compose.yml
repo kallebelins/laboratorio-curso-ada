@@ -39,11 +39,12 @@ services:
   etl:
     container_name: movieflix-pipeline
     build: .
+    entrypoint: ["python"]
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:P4ssw0rd@db:5432/movieflix}
     volumes:
       - ./data:/app/data
-    command: python data/scripts/etl_load.py
+    command: data/scripts/etl_load.py
     depends_on:
       db:
         condition: service_healthy
