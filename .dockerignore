@@ -1,0 +1,15 @@
+# Docker build context – arquivos excluídos da imagem
+.git/
+.github/
+.venv/
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+data/warehouse/
+data/mart/
+data/scripts/
+nginx/
+tests/
+*.md

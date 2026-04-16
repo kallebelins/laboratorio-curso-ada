@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}MovieFlix Analytics{% endblock %}</title>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+  <style>
+    body { background-color: #0d1117; color: #e6edf3; }
+    .navbar { background-color: #161b22 !important; }
+    .card  { background-color: #161b22; border: 1px solid #30363d; }
+    .table { --bs-table-bg: transparent; --bs-table-color: #e6edf3; }
+    .table-hover tbody tr:hover { --bs-table-bg-state: rgba(255,255,255,.05); }
+    thead { color: #8b949e; }
+    a { color: #58a6ff; }
+    a:hover { color: #79c0ff; }
+    .badge-genre { font-size: .75rem; }
+    .stat-value { font-size: 2rem; font-weight: 700; color: #58a6ff; }
+    .stat-label { font-size: .85rem; color: #8b949e; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="/">🎬 MovieFlix Analytics</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="/">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="/movies">Filmes</a></li>
+        <li class="nav-item"><a class="nav-link" href="/analytics">Analytics</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container pb-5">
+  {% block content %}{% endblock %}
+</div>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T0a1DbEEP1xEL6A0MULOrCXa0MFHeWm"
+  crossorigin="anonymous"
+></script>
+</body>
+</html>

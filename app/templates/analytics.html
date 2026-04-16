@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Analytics – MovieFlix Analytics{% endblock %}
+
+{% block content %}
+<h2 class="mb-4 fw-semibold">Analytics</h2>
+
+<div class="row g-4">
+
+  <!-- Top gêneros por nota média ---------------------------------------------->
+  <div class="col-lg-6">
+    <h5 class="mb-3">🎭 Melhores Gêneros por Nota Média</h5>
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Gênero</th>
+              <th class="text-center">Nota Média</th>
+              <th class="text-center">Avaliações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for g in top_genres %}
+            <tr>
+              <td class="text-muted">{{ loop.index }}</td>
+              <td>{{ g.genre }}</td>
+              <td class="text-center fw-bold">{{ g.avg_score }}</td>
+              <td class="text-center text-muted">{{ g.num_ratings }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-center text-muted py-3">Sem dados.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notas por faixa etária ------------------------------------------------->
+  <div class="col-lg-6">
+    <h5 class="mb-3">👥 Nota Média por Faixa Etária</h5>
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Faixa Etária</th>
+              <th class="text-center">Nota Média</th>
+              <th class="text-center">Avaliações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in by_age_group %}
+            <tr>
+              <td><span class="badge bg-secondary">{{ a.age_group or "–" }}</span></td>
+              <td class="text-center fw-bold">{{ a.avg_score }}</td>
+              <td class="text-center text-muted">{{ a.num_ratings }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="3" class="text-center text-muted py-3">Sem dados.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Avaliações por país ----------------------------------------------------->
+  <div class="col-12">
+    <h5 class="mb-3">🌍 Avaliações por País (Top 10)</h5>
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>País</th>
+              <th class="text-center">Total de Avaliações</th>
+              <th class="text-center">Nota Média</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in by_country %}
+            <tr>
+              <td class="text-muted">{{ loop.index }}</td>
+              <td>{{ c.country or "–" }}</td>
+              <td class="text-center">{{ c.num_ratings }}</td>
+              <td class="text-center fw-bold">{{ c.avg_score }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-center text-muted py-3">Sem dados.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

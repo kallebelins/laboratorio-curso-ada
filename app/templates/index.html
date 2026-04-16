@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Dashboard – MovieFlix Analytics{% endblock %}
+
+{% block content %}
+<h2 class="mb-4 fw-semibold">Dashboard</h2>
+
+<!-- Resumo ------------------------------------------------------------------>
+<div class="row g-3 mb-5">
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3">
+      <div class="stat-value">{{ total_movies }}</div>
+      <div class="stat-label">Filmes</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3">
+      <div class="stat-value">{{ total_users }}</div>
+      <div class="stat-label">Usuários</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3">
+      <div class="stat-value">{{ total_ratings }}</div>
+      <div class="stat-label">Avaliações</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3">
+      <div class="stat-value">{{ avg_rating or "–" }}</div>
+      <div class="stat-label">Nota Média Geral</div>
+    </div>
+  </div>
+</div>
+
+<!-- Top 5 filmes mais avaliados --------------------------------------------->
+<h4 class="mb-3">🏆 Top 5 Filmes Mais Avaliados</h4>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Título</th>
+          <th>Gênero</th>
+          <th class="text-center">Avaliações</th>
+          <th class="text-center">Nota Média</th>
+          <th class="text-center">IMDB</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in top_movies %}
+        <tr>
+          <td class="text-muted">{{ loop.index }}</td>
+          <td>
+            <a href="/movies/{{ m.imdb_id }}">{{ m.title }}</a>
+            <small class="text-muted d-block">{{ m.year }}</small>
+          </td>
+          <td><small class="text-muted">{{ m.genre or "–" }}</small></td>
+          <td class="text-center">{{ m.num_ratings }}</td>
+          <td class="text-center fw-bold">{{ m.avg_score or "–" }}</td>
+          <td class="text-center">{{ m.imdb_rating or "–" }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">Sem dados.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="mt-3">
+  <a href="/movies" class="btn btn-outline-primary btn-sm">Ver todos os filmes →</a>
+  <a href="/analytics" class="btn btn-outline-secondary btn-sm ms-2">Ver analytics →</a>
+</div>
+{% endblock %}

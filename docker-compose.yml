@@ -1,0 +1,48 @@
+services:
+
+  # ── Banco de Dados ──────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${DB_NAME:-movieflix}
+      POSTGRES_USER:     ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-movieflix}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  # ── Aplicação Flask ─────────────────────────────────────────────────────────
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:changeme@db:5432/movieflix}
+      FLASK_ENV:    ${FLASK_ENV:-production}
+      SECRET_KEY:   ${SECRET_KEY:-change-me-to-a-random-secret}
+    volumes:
+      # Data Lake montado como somente-leitura dentro do container
+      - ./data/lake:/app/data/lake:ro
+    expose:
+      - "5000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ── Nginx (proxy reverso) ────────────────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
