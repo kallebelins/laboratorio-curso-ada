@@ -35,7 +35,7 @@
 ## FASE 2 – Data Lake
 
 ```
-[ ] 004 - Buscar dados via OMDB API e gerar CSVs (Data Lake)
+[x] 004 - Buscar dados via OMDB API e gerar CSVs (Data Lake)
     Criar script data/scripts/fetch_lake.py que:
       - Consulta OMDB API para N filmes (ex.: 50 títulos variados)
       - Gera data/lake/movies.csv (imdbID, title, genre, year, country, imdbRating)
